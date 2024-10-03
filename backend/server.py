@@ -10,6 +10,7 @@ CORS(app)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['mydatabase']
 collection = db['users']
+collection_two=db['students']
 
 # -----------building the Api's----------------
 
@@ -35,7 +36,7 @@ def convert_oid_to_str(data):
 
 @app.route("/get-questions-data", methods=['GET'])
 def getQuestions():
-    questions = list(collection.find({}, {'correctAnswer': 0}))
+    questions = list(collection.find({}))
     questions = convert_oid_to_str(questions)
     return jsonify(questions)
 
@@ -68,6 +69,17 @@ def update_question(question_id):
         return jsonify({"message": "Question updated successfully"}), 200
     else:
         return jsonify({"message": "Question not found"}), 404
+    
+#  --------------All student Api's-------------   
+@app.route("/validate-test-user",methods=['POST'])
+def validateTestUser():
+    response=list(collection_two.find({}))
+    response=convert_oid_to_str(response)
+    print(response)
+    data=request.get_json()
+    print(data)
+    return jsonify(data)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=7000)
